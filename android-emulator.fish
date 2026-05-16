@@ -129,7 +129,7 @@ end
 function wait_for_boot --argument serial
     $ANDROID_ADB_BIN -s "$serial" wait-for-device >/dev/null; or fail "adb wait-for-device failed: $serial"
 
-    for _ in (seq 120)
+    for boot_attempt in (seq 120)
         set -l booted ($ANDROID_ADB_BIN -s "$serial" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
         if test "$booted" = 1
             $ANDROID_ADB_BIN -s "$serial" shell input keyevent 82 >/dev/null 2>&1
@@ -157,7 +157,7 @@ function ensure_emulator
     log "start emulator: $avd_name"
     nohup "$ANDROID_EMULATOR_BIN" -avd "$avd_name" >"$ANDROID_EMULATOR_LOG_PATH" 2>&1 &
 
-    for _ in (seq 120)
+    for start_attempt in (seq 120)
         set serial (first_running_emulator)
         if test -n "$serial"
             wait_for_boot "$serial"
