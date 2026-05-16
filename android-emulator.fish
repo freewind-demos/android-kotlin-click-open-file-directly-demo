@@ -18,7 +18,9 @@ end
 function resolve_script_dir
     set -l script_path (status filename)
     test -n "$script_path"; or fail "cannot resolve script path"
-    dirname (abs_path "$script_path")
+    set -l resolved_script_path (path resolve "$script_path" 2>/dev/null)
+    test -n "$resolved_script_path"; or set resolved_script_path (abs_path "$script_path")
+    dirname "$resolved_script_path"
 end
 
 function resolve_gradlew
